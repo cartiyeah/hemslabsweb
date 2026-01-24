@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, MotionValue, Variants } from "framer-motion";
 import VideoShowcase from "@/components/ui/VideoShowcase";
 import DepthCard from "@/components/ui/DepthCard";
 
@@ -81,7 +81,7 @@ function Parallax3D({
 }
 
 // Hero intro animations
-const heroContainer = {
+const heroContainer: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -92,7 +92,7 @@ const heroContainer = {
   },
 };
 
-const heroItem = {
+const heroItem: Variants = {
   hidden: { opacity: 0, y: 40, rotateX: 10 },
   show: {
     opacity: 1,
@@ -106,7 +106,7 @@ const heroItem = {
 };
 
 // Floating entrance animation
-const floatIn = {
+const floatIn: Variants = {
   hidden: { opacity: 0, y: 80, rotateX: 15, scale: 0.95 },
   visible: {
     opacity: 1,
