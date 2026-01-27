@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" fill="white">
+  <defs>
+    <filter id="blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
+    </filter>
+  </defs>
+  <g filter="url(#blur)" opacity="0.95">
+    <!-- Main body -->
+    <ellipse cx="100" cy="70" rx="60" ry="35" />
+    <!-- Left bump -->
+    <ellipse cx="55" cy="65" rx="35" ry="28" />
+    <!-- Right bump -->
+    <ellipse cx="145" cy="68" rx="30" ry="25" />
+    <!-- Top bumps -->
+    <ellipse cx="80" cy="45" rx="28" ry="22" />
+    <ellipse cx="115" cy="42" rx="32" ry="25" />
+    <!-- Small accent bumps -->
+    <ellipse cx="45" cy="75" rx="18" ry="15" />
+    <ellipse cx="155" cy="78" rx="15" ry="12" />
+  </g>
+</svg>
