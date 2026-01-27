@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Bungee } from "next/font/google"; // Changed import
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,10 +12,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const robotoMono = Roboto_Mono({
-  variable: "--font-roboto-mono",
+const bungee = Bungee({ // Added Bungee
+  variable: "--font-bungee",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${robotoMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} antialiased`}
       >
         {children}
       </body>

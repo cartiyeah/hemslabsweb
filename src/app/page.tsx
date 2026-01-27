@@ -203,8 +203,8 @@ export default function Home() {
             : 'rgba(255, 255, 255, 0.15)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          borderRadius: '50px',
-          padding: '14px 80px',
+          borderRadius: '30px',
+          padding: '12px 40px',
           border: scrollProgress > 0.5
             ? '1px solid rgba(255, 255, 255, 0.2)'
             : '1px solid rgba(255, 255, 255, 0.3)',
@@ -220,7 +220,7 @@ export default function Home() {
               className={activeIndex === index ? 'active-nav-item' : ''}
               style={{
                 position: 'relative',
-                fontFamily: "var(--font-roboto-mono), monospace",
+                fontFamily: "var(--font-bungee), sans-serif",
                 color: activeIndex === index ? 'white' : 'rgba(255, 255, 255, 0.7)',
                 fontSize: '13px',
                 fontWeight: activeIndex === index ? 500 : 400,
@@ -272,7 +272,7 @@ export default function Home() {
         }}
       >
         <span style={{
-          fontFamily: "var(--font-roboto-mono), monospace",
+          fontFamily: "var(--font-bungee), sans-serif",
           color: 'rgba(255, 255, 255, 0.9)',
           fontSize: '14px'
         }}>
@@ -287,7 +287,7 @@ export default function Home() {
         id="who-n-what"
         ref={(el) => { sectionRefs.current[0] = el; }}
         style={{
-          minHeight: '100vh',
+          minHeight: '150vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -298,7 +298,7 @@ export default function Home() {
       >
         <div style={{ textAlign: 'center' }}>
           <h1 style={{
-            fontFamily: "var(--font-roboto-mono), monospace",
+            fontFamily: "var(--font-bungee), sans-serif",
             fontSize: '48px',
             fontWeight: 300,
             color: 'white',
@@ -309,7 +309,7 @@ export default function Home() {
             Who &apos;n What
           </h1>
           <p style={{
-            fontFamily: "var(--font-roboto-mono), monospace",
+            fontFamily: "var(--font-bungee), sans-serif",
             fontSize: '16px',
             color: 'rgba(255, 255, 255, 0.8)',
             maxWidth: '500px',
@@ -325,7 +325,7 @@ export default function Home() {
         id="events"
         ref={(el) => { sectionRefs.current[1] = el; }}
         style={{
-          minHeight: '100vh',
+          minHeight: '150vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -335,7 +335,7 @@ export default function Home() {
       >
         <div style={{ textAlign: 'center' }}>
           <h1 style={{
-            fontFamily: "var(--font-roboto-mono), monospace",
+            fontFamily: "var(--font-bungee), sans-serif",
             fontSize: '48px',
             fontWeight: 300,
             color: 'white',
@@ -346,7 +346,7 @@ export default function Home() {
             Events
           </h1>
           <p style={{
-            fontFamily: "var(--font-roboto-mono), monospace",
+            fontFamily: "var(--font-bungee), sans-serif",
             fontSize: '16px',
             color: 'rgba(255, 255, 255, 0.8)',
             maxWidth: '500px',
@@ -362,7 +362,7 @@ export default function Home() {
         id="bubbles"
         ref={(el) => { sectionRefs.current[2] = el; }}
         style={{
-          minHeight: '100vh',
+          minHeight: '150vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -372,7 +372,7 @@ export default function Home() {
       >
         <div style={{ textAlign: 'center' }}>
           <h1 style={{
-            fontFamily: "var(--font-roboto-mono), monospace",
+            fontFamily: "var(--font-bungee), sans-serif",
             fontSize: '48px',
             fontWeight: 300,
             color: 'white',
@@ -383,7 +383,7 @@ export default function Home() {
             Bubbles
           </h1>
           <p style={{
-            fontFamily: "var(--font-roboto-mono), monospace",
+            fontFamily: "var(--font-bungee), sans-serif",
             fontSize: '16px',
             color: 'rgba(255, 255, 255, 0.8)',
             maxWidth: '500px',
@@ -399,7 +399,7 @@ export default function Home() {
         id="social"
         ref={(el) => { sectionRefs.current[3] = el; }}
         style={{
-          minHeight: '100vh',
+          minHeight: '150vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -409,7 +409,7 @@ export default function Home() {
       >
         <div style={{ textAlign: 'center' }}>
           <h1 style={{
-            fontFamily: "var(--font-roboto-mono), monospace",
+            fontFamily: "var(--font-bungee), sans-serif",
             fontSize: '48px',
             fontWeight: 300,
             color: 'white',
@@ -420,7 +420,7 @@ export default function Home() {
             Social
           </h1>
           <p style={{
-            fontFamily: "var(--font-roboto-mono), monospace",
+            fontFamily: "var(--font-bungee), sans-serif",
             fontSize: '16px',
             color: 'rgba(255, 255, 255, 0.8)',
             maxWidth: '500px',
