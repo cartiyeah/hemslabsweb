@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 
 interface Star {
     id: number;
@@ -16,13 +16,13 @@ interface StarFieldProps {
     opacity: number;
 }
 
-export default function StarField({ opacity }: StarFieldProps) {
+const StarField = memo(function StarField({ opacity }: StarFieldProps) {
     const [stars, setStars] = useState<Star[]>([]);
 
     useEffect(() => {
         // Generate fewer, subtle stars (50 instead of 150)
         const generated: Star[] = [];
-        const starCount = 50;
+        const starCount = 90;
 
         for (let i = 0; i < starCount; i++) {
             generated.push({
@@ -42,7 +42,11 @@ export default function StarField({ opacity }: StarFieldProps) {
     return (
         <div
             className="star-field fixed inset-0 pointer-events-none z-0"
-            style={{ opacity, transition: 'opacity 1s ease' }}
+            style={{
+                opacity,
+                // Removed transition to keep stars perfectly in sync with sky darkness
+                willChange: 'opacity'
+            }}
         >
             {stars.map((star) => (
                 <div
@@ -55,10 +59,13 @@ export default function StarField({ opacity }: StarFieldProps) {
                         height: `${star.size}px`,
                         opacity: star.opacity,
                         animation: `twinkle ${star.animDuration}s ease-in-out infinite ${star.animDelay}s`,
-                        boxShadow: `0 0 ${star.size + 1}px rgba(255, 255, 255, 0.9)`
+                        boxShadow: `0 0 ${star.size + 1}px rgba(255, 255, 255, 0.9)`,
+                        transform: 'translateZ(0)', // Light hardware acceleration
                     }}
                 />
             ))}
         </div>
     );
-}
+});
+
+export default StarField;
