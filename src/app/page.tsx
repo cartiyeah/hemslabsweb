@@ -174,13 +174,14 @@ export default function Home() {
   const skyTheme = useMemo(() => {
     let top, middle, bottom;
 
-    if (scrollProgress < 0.06) {
+    if (scrollProgress < 0.10) {
+      // Day sky holds until curtain starts covering
       top = skyColors.day.top;
       middle = skyColors.day.middle;
       bottom = skyColors.day.bottom;
-    } else if (scrollProgress < 0.16) {
-      // Transition from blue sky to dark navy DURING bubble surge (0.06 to 0.16)
-      const t = (scrollProgress - 0.06) / 0.10;
+    } else if (scrollProgress < 0.18) {
+      // Transition from blue sky to dark navy WHILE curtain fully covers viewport
+      const t = (scrollProgress - 0.10) / 0.08;
       top = lerpColor(skyColors.day.top, skyColors.bubblesDeep.top, t);
       middle = lerpColor(skyColors.day.middle, skyColors.bubblesDeep.middle, t);
       bottom = lerpColor(skyColors.day.bottom, skyColors.bubblesDeep.bottom, t);
@@ -229,12 +230,12 @@ export default function Home() {
       section.scrollIntoView({ behavior: 'smooth' });
 
       // Fallback timeout to reset navigation state (in case scrollend doesn't fire)
-      // Must exceed bubble surge duration (1600ms) to prevent interference
+      // Must exceed bubble surge duration (2500ms) to prevent interference
       setTimeout(() => {
         stateRef.current.isNavigating = false;
         setIsNavigating(false);
         setNavTarget(null);
-      }, 1800);
+      }, 2800);
     }
   };
 
@@ -280,7 +281,7 @@ export default function Home() {
 
       {/* Logo - Top Left */}
       <div
-        className="fixed z-50"
+        className="fixed z-[250]"
         style={{ top: '-95px', left: '10px', cursor: 'pointer' }}
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       >
@@ -308,7 +309,7 @@ export default function Home() {
           position: 'fixed',
           top: '24px',
           right: '28px',
-          zIndex: 100,
+          zIndex: 250,
           background: 'transparent',
           border: 'none',
           padding: 0,

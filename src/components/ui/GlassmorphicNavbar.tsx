@@ -30,7 +30,7 @@ const GlassmorphicNavbar: React.FC<GlassmorphicNavbarProps> = ({
   const [hoveredTab, setHoveredTab] = useState<number | null>(null);
 
   return (
-    <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[100]">
+    <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[250]">
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
