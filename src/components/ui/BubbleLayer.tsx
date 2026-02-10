@@ -31,23 +31,27 @@ const BubbleLayer = memo(function BubbleLayer({ scrollProgress, isNavigating, ta
     // Generate bubbles once
     useEffect(() => {
         const generated: Bubble[] = [];
-        const bubbleCount = 250; // Reduced count for clarity
+        const bubbleCount = 100;
 
         for (let i = 0; i < bubbleCount; i++) {
+            // Distribute more uniformly across the screen
+            const column = i % 10;
+            const baseLeft = column * 10 + Math.random() * 8;
+
             generated.push({
                 id: i,
-                left: Math.random() * 100,
-                size: 40 + Math.random() * 100, // Larger bubbles
-                duration: 0.4 + Math.random() * 0.7, // Even faster rise (0.2s to 0.7s)
-                delay: Math.random() * 0.6, // Tighter stagger
+                left: Math.min(baseLeft, 98),
+                size: 72 + Math.random() * 120, // 20% larger bubbles (72-192px)
+                duration: 0.6 + Math.random() * 0.9,
+                delay: Math.random() * 0.5,
             });
         }
 
         setBubbles(generated);
     }, []);
 
-    // Trigger threshold: 20% scroll
-    const triggerPoint = 0.22;
+    // Trigger threshold: 6% scroll (masks transition from hero to Bubbles)
+    const triggerPoint = 0.16;
     const lastProgressRef = useRef(scrollProgress);
     const isJumpingRef = useRef(false);
 
@@ -117,25 +121,48 @@ const BubbleLayer = memo(function BubbleLayer({ scrollProgress, isNavigating, ta
                 zIndex: 200, // Above everything!
             }}
         >
-            {bubbles.map((bubble) => (
-                <div
-                    key={bubble.id}
-                    className="bubble"
-                    style={{
-                        position: 'absolute',
-                        left: `${bubble.left}%`,
-                        bottom: '-200px', // Start further down
-                        width: `${bubble.size}px`,
-                        height: `${bubble.size}px`,
-                        background: `url('/bubble.svg') no-repeat center center`,
-                        backgroundSize: 'contain',
-                        // One-shot animation (forwards), linear for constant flow
-                        animation: `bubble-surge ${bubble.duration}s linear forwards`,
-                        animationDelay: `${bubble.delay}s`,
-                        transform: 'translateZ(0)', // Force GPU without excessive layering hints
-                    }}
-                />
-            ))}
+            {bubbles.map((bubble) => {
+                // Randomize iridescent color shift for each bubble
+                const hueShift = (bubble.id * 37) % 360;
+
+                return (
+                    <div
+                        key={bubble.id}
+                        className="bubble"
+                        style={{
+                            position: 'absolute',
+                            left: `${bubble.left}%`,
+                            bottom: '-200px',
+                            width: `${bubble.size}px`,
+                            height: `${bubble.size}px`,
+                            borderRadius: '50%',
+                            // Soap bubble with visible tinted iridescence
+                            background: `
+                                radial-gradient(circle at 30% 30%,
+                                    rgba(255, 255, 255, 0.7) 0%,
+                                    rgba(255, 255, 255, 0.2) 8%,
+                                    hsla(${hueShift}, 60%, 80%, 0.15) 25%,
+                                    hsla(${(hueShift + 90) % 360}, 55%, 75%, 0.12) 45%,
+                                    hsla(${(hueShift + 180) % 360}, 50%, 70%, 0.18) 65%,
+                                    hsla(${(hueShift + 60) % 360}, 65%, 65%, 0.4) 80%,
+                                    hsla(${(hueShift + 120) % 360}, 60%, 60%, 0.5) 90%,
+                                    hsla(${hueShift}, 55%, 65%, 0.45) 100%
+                                )
+                            `,
+                            // Tinted iridescent border ring
+                            border: `2px solid hsla(${hueShift}, 50%, 65%, 0.6)`,
+                            boxShadow: `
+                                inset 0 0 ${bubble.size * 0.15}px rgba(255, 255, 255, 0.3),
+                                inset ${bubble.size * 0.1}px ${bubble.size * 0.1}px ${bubble.size * 0.2}px rgba(255, 255, 255, 0.25),
+                                0 0 ${bubble.size * 0.12}px hsla(${(hueShift + 90) % 360}, 55%, 65%, 0.35)
+                            `,
+                            animation: `bubble-surge ${bubble.duration}s linear forwards`,
+                            animationDelay: `${bubble.delay}s`,
+                            transform: 'translateZ(0)',
+                        }}
+                    />
+                );
+            })}
         </div>
     );
 });

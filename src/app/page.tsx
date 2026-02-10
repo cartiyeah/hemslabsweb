@@ -1,11 +1,15 @@
+
+
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
-import CloudLayer from "@/components/ui/CloudLayer";
 import StarField from "@/components/ui/StarField";
 import BubbleLayer from "@/components/ui/BubbleLayer";
 import ChatWindow from "@/components/ui/ChatWindow";
+import GlassmorphicNavbar from "@/components/ui/GlassmorphicNavbar";
+import BubblesSection from "@/components/ui/BubblesSection";
+import HeroSection from "@/components/ui/HeroSection";
 
 const sections = [
   { id: "who-n-what", label: "Who 'n What" },
@@ -14,27 +18,22 @@ const sections = [
   { id: "events", label: "Events" },
 ];
 
-// Day to night color stops
+// Day to dark color stops
 const skyColors = {
   day: {
-    top: '#2e8bc0',
-    middle: '#45a5c4',
-    bottom: '#7ec8e3',
+    top: '#1E5799',    // Deep blue (top)
+    middle: '#4A90C2', // Medium blue
+    bottom: '#7EC8E3', // Light blue (horizon)
   },
   bubblesDeep: {
-    top: '#1a1a1a', // Blackish grey
-    middle: '#2a2a2a',
-    bottom: '#1a1a1a',
+    top: '#0f172a', // Dark navy (particle bg)
+    middle: '#131c2e',
+    bottom: '#162032',
   },
-  sunset: {
-    top: '#1a1a4e',
-    middle: '#ff6b6b',
-    bottom: '#feca57',
-  },
-  night: {
-    top: '#0a0a1a',
-    middle: '#1a1a3e',
-    bottom: '#2a2a5e',
+  black: {
+    top: '#000000',
+    middle: '#000000',
+    bottom: '#000000',
   },
 };
 
@@ -65,7 +64,8 @@ export default function Home() {
   const [navTarget, setNavTarget] = useState<number | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isScrollLocked, setIsScrollLocked] = useState(false);
-
+  const [surgeComplete, setSurgeComplete] = useState(false);
+  
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
 
   // Force scroll to top on reload
@@ -76,22 +76,34 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Toggle body scroll lock
+  // Reduce scroll sensitivity by 90% during bubble surge (instead of full lock)
   useEffect(() => {
-    if (isScrollLocked) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.scrollbarGutter = 'stable';
-    } else {
-      document.body.style.overflow = '';
-      document.body.style.scrollbarGutter = '';
-    }
+    if (!isScrollLocked) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      window.scrollBy(0, e.deltaY * 0.1);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchmove', handleTouchMove);
+    };
   }, [isScrollLocked]);
   // High-performance tracking
   const stateRef = useRef({
     lastProgress: 0,
     isNavigating: false,
     lastNavTime: 0,
-    isScrollLocked: false // Synchronous lock for the scroll handler
+    isScrollLocked: false, // Synchronous lock for the scroll handler
+    surgeComplete: false,  // Once bubble surge finishes, treat 0.08+ as Bubbles section
   });
 
   // Track scroll position
@@ -122,13 +134,19 @@ export default function Home() {
             return;
           }
 
+          let foundIndex = 0;
           for (let i = sections.length - 1; i >= 0; i--) {
             const section = sectionRefs.current[i];
             if (section && section.offsetTop <= scrollPosition) {
-              setActiveIndex((prev) => (prev !== i ? i : prev)); // Only update if changed
+              foundIndex = i;
               break;
             }
           }
+          // After bubble surge, treat anything past trigger point as Bubbles section
+          if (stateRef.current.surgeComplete && progress >= 0.06 && foundIndex === 0) {
+            foundIndex = 1;
+          }
+          setActiveIndex((prev) => (prev !== foundIndex ? foundIndex : prev));
           ticking = false;
         });
         ticking = true;
@@ -150,39 +168,35 @@ export default function Home() {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('scrollend', handleScrollEnd);
     };
-  }, [activeIndex]); // Re-bind if sections change, though they are static here
+  }, []); // Sections are static, no need to re-bind
 
   // Sun calculations and Colors memoized
   const skyTheme = useMemo(() => {
     let top, middle, bottom;
 
-    if (scrollProgress < 0.15) {
+    if (scrollProgress < 0.06) {
       top = skyColors.day.top;
       middle = skyColors.day.middle;
       bottom = skyColors.day.bottom;
-    } else if (scrollProgress < 0.25) {
-      const t = (scrollProgress - 0.15) / 0.10;
+    } else if (scrollProgress < 0.16) {
+      // Transition from blue sky to dark navy DURING bubble surge (0.06 to 0.16)
+      const t = (scrollProgress - 0.06) / 0.10;
       top = lerpColor(skyColors.day.top, skyColors.bubblesDeep.top, t);
       middle = lerpColor(skyColors.day.middle, skyColors.bubblesDeep.middle, t);
       bottom = lerpColor(skyColors.day.bottom, skyColors.bubblesDeep.bottom, t);
-    } else if (scrollProgress < 0.40) {
+    } else if (scrollProgress < 0.55) {
       top = skyColors.bubblesDeep.top;
       middle = skyColors.bubblesDeep.middle;
       bottom = skyColors.bubblesDeep.bottom;
-    } else if (scrollProgress < 0.50) {
-      const t = (scrollProgress - 0.40) / 0.10;
-      top = lerpColor(skyColors.bubblesDeep.top, skyColors.sunset.top, t);
-      middle = lerpColor(skyColors.bubblesDeep.middle, skyColors.sunset.middle, t);
-      bottom = lerpColor(skyColors.bubblesDeep.bottom, skyColors.sunset.bottom, t);
-    } else if (scrollProgress < 0.75) {
-      top = skyColors.sunset.top;
-      middle = skyColors.sunset.middle;
-      bottom = skyColors.sunset.bottom;
+    } else if (scrollProgress < 0.70) {
+      const t = (scrollProgress - 0.55) / 0.15;
+      top = lerpColor(skyColors.bubblesDeep.top, skyColors.black.top, t);
+      middle = lerpColor(skyColors.bubblesDeep.middle, skyColors.black.middle, t);
+      bottom = lerpColor(skyColors.bubblesDeep.bottom, skyColors.black.bottom, t);
     } else {
-      const t = (scrollProgress - 0.75) / 0.25;
-      top = lerpColor(skyColors.sunset.top, skyColors.night.top, t);
-      middle = lerpColor(skyColors.sunset.middle, skyColors.night.middle, t);
-      bottom = lerpColor(skyColors.sunset.bottom, skyColors.night.bottom, t);
+      top = skyColors.black.top;
+      middle = skyColors.black.middle;
+      bottom = skyColors.black.bottom;
     }
 
     const sunAngle = scrollProgress * Math.PI;
@@ -191,28 +205,36 @@ export default function Home() {
 
     const sunColor = scrollProgress < 0.3
       ? '#FFD700'
-      : scrollProgress < 0.7
-        ? lerpColor('#FFD700', '#FF4500', (scrollProgress - 0.3) / 0.4)
-        : lerpColor('#FF4500', '#8B0000', (scrollProgress - 0.7) / 0.3);
+      : lerpColor('#FFD700', '#8B0000', Math.min((scrollProgress - 0.3) / 0.4, 1));
 
-    const sunOpacity = scrollProgress > 0.85 ? 1 - ((scrollProgress - 0.85) / 0.15) : 1;
-    const isNight = scrollProgress > 0.7;
+    // Fade sun out as sky goes dark
+    const sunOpacity = scrollProgress > 0.55 ? Math.max(1 - ((scrollProgress - 0.55) / 0.15), 0) : 1;
+    const isNight = scrollProgress > 0.70;
 
     return { top, middle, bottom, sunX, sunY, sunColor, sunOpacity, isNight };
   }, [scrollProgress]);
 
   const scrollToSection = (index: number) => {
-    setActiveIndex(index); // Instant feedback
+    // Immediately update the active tab - this is the user's intent
+    setActiveIndex(index);
+
     const section = sectionRefs.current[index];
     if (section) {
-      // If jumping to any section other than the current one, suppress surge
-      if (index !== activeIndex) {
-        stateRef.current.lastNavTime = Date.now();
-        stateRef.current.isNavigating = true;
-        setNavTarget(index);
-        setIsNavigating(true);
-      }
+      // Mark as navigating to prevent scroll handler interference
+      stateRef.current.lastNavTime = Date.now();
+      stateRef.current.isNavigating = true;
+      setNavTarget(index);
+      setIsNavigating(true);
+
       section.scrollIntoView({ behavior: 'smooth' });
+
+      // Fallback timeout to reset navigation state (in case scrollend doesn't fire)
+      // Must exceed bubble surge duration (1600ms) to prevent interference
+      setTimeout(() => {
+        stateRef.current.isNavigating = false;
+        setIsNavigating(false);
+        setNavTarget(null);
+      }, 1800);
     }
   };
 
@@ -230,12 +252,10 @@ export default function Home() {
       />
 
       {/* Star Field - Visible only at night */}
-      <StarField opacity={skyTheme.isNight ? (scrollProgress - 0.7) / 0.3 : 0} />
+      <StarField opacity={skyTheme.isNight ? Math.min((scrollProgress - 0.70) / 0.15, 1) : 0} />
 
 
 
-      {/* Floating Cloud Layer */}
-      <CloudLayer scrollProgress={scrollProgress} />
 
       {/* Bubble Surge Transition */}
       <BubbleLayer
@@ -245,7 +265,13 @@ export default function Home() {
         onAnimatingChange={(animating) => {
           stateRef.current.isScrollLocked = animating;
           setIsScrollLocked(animating);
-          if (animating) setActiveIndex(1);
+          if (animating && navTarget === null) setActiveIndex(1);
+          if (!animating && isScrollLocked) {
+            setSurgeComplete(true);
+            stateRef.current.surgeComplete = true;
+            // After surge, we're in Bubbles territory — set index to 1
+            setActiveIndex(1);
+          }
         }}
       />
 
@@ -253,7 +279,11 @@ export default function Home() {
       <ChatWindow isOpen={isChatOpen} />
 
       {/* Logo - Top Left */}
-      <div className="fixed z-50" style={{ top: '-95px', left: '10px' }}>
+      <div
+        className="fixed z-50"
+        style={{ top: '-95px', left: '10px', cursor: 'pointer' }}
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      >
         <Image
           src="/hems-logo.svg.png"
           alt="Hems"
@@ -264,101 +294,47 @@ export default function Home() {
         />
       </div>
 
-      {/* Main Glass Navbar - Center Top */}
-      <nav
-        className="navbar-capsule"
-        style={{
-          position: 'fixed',
-          top: '20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 100,
-          background: scrollProgress > 0.5
-            ? 'rgba(10, 20, 40, 0.4)'
-            : 'rgba(20, 40, 80, 0.25)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRadius: '30px',
-          padding: '8px 36px',
-          border: scrollProgress > 0.5
-            ? '1px solid rgba(100, 150, 255, 0.2)'
-            : '1px solid rgba(150, 200, 255, 0.3)',
-          boxShadow: '0 8px 32px rgba(0, 20, 60, 0.2)',
-          transition: 'all 0.3s ease',
-        }}
-      >
-        <div style={{ display: 'flex', gap: '48px', alignItems: 'center' }}>
-          {sections.map((section, index) => (
-            <span
-              key={section.id}
-              onClick={() => scrollToSection(index)}
-              className={`glitch-text ${activeIndex === index ? 'active-nav-item' : ''}`}
-              style={{
-                position: 'relative',
-                fontFamily: "var(--font-audiowide), sans-serif",
-                color: activeIndex === index ? 'white' : 'rgba(255, 255, 255, 0.7)',
-                fontSize: '14px',
-                fontWeight: 400,
-                letterSpacing: '1px',
-                cursor: 'pointer',
-                userSelect: 'none',
-                transition: 'color 0.3s ease',
-                padding: '8px 16px',
-                borderRadius: '25px',
-                ['--glitch-delay' as string]: `${index * 0.25}s`,
-              } as React.CSSProperties}
-            >
-              {activeIndex === index && (
-                <>
-                  <span className="wind-particle wind-1" />
-                  <span className="wind-particle wind-2" />
-                  <span className="wind-particle wind-3" />
-                  <span className="wind-particle wind-4" />
-                  <span className="wind-particle wind-5" />
-                  <span className="wind-particle wind-6" />
-                  <span className="wind-glow" />
-                </>
-              )}
-              {section.label}
-            </span>
-          ))}
-        </div>
-      </nav>
+      {/* Glassmorphic Navbar */}
+      <GlassmorphicNavbar
+        items={sections}
+        activeIndex={activeIndex}
+        onNavigate={scrollToSection}
+      />
 
-      {/* Small Glass Bar - Right */}
-      <div
+      {/* Bubble Chat Button - Right */}
+      <button
         onClick={() => setIsChatOpen(!isChatOpen)}
         style={{
           position: 'fixed',
-          top: '20px',
-          right: '24px',
+          top: '24px',
+          right: '28px',
           zIndex: 100,
-          background: (scrollProgress > 0.5 || isChatOpen)
-            ? 'rgba(0, 0, 0, 0.2)'
-            : 'rgba(255, 255, 255, 0.15)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderRadius: '16px',
-          padding: '12px 20px',
-          border: (scrollProgress > 0.5 || isChatOpen)
-            ? '1px solid rgba(255, 255, 255, 0.2)'
-            : '1px solid rgba(255, 255, 255, 0.3)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
-          transition: 'all 0.3s ease',
+          background: 'transparent',
+          border: 'none',
+          padding: 0,
           cursor: 'pointer',
+          fontSize: '32px',
+          lineHeight: 1,
+          filter: isChatOpen
+            ? 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.8))'
+            : 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3))',
+          transform: isChatOpen ? 'scale(1.1)' : 'scale(1)',
+          transition: 'all 0.2s ease',
           userSelect: 'none',
         }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.15)';
+          e.currentTarget.style.filter = 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.6))';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = isChatOpen ? 'scale(1.1)' : 'scale(1)';
+          e.currentTarget.style.filter = isChatOpen
+            ? 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.8))'
+            : 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3))';
+        }}
       >
-        <span style={{
-          fontFamily: "var(--font-rowdies), sans-serif",
-          color: 'rgba(255, 255, 255, 0.9)',
-          fontSize: '20px', // Increased size for emoji visibility
-          lineHeight: 1,
-          userSelect: 'none',
-        }}>
-          🫧
-        </span>
-      </div>
+        🫧
+      </button>
 
       {/* PAGE SECTIONS */}
 
@@ -367,16 +343,12 @@ export default function Home() {
         id="who-n-what"
         ref={(el) => { sectionRefs.current[0] = el; }}
         style={{
-          minHeight: '150vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingTop: '100px',
+          minHeight: '200vh',
           position: 'relative',
           zIndex: 2,
         }}
       >
-        {/* Content placeholder */}
+        <HeroSection onNavigate={scrollToSection} />
       </section>
 
       {/* Section 2: Bubbles */}
@@ -384,15 +356,12 @@ export default function Home() {
         id="bubbles"
         ref={(el) => { sectionRefs.current[1] = el; }}
         style={{
-          minHeight: '150vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          minHeight: '200vh',
           position: 'relative',
           zIndex: 2,
         }}
       >
-        {/* Content placeholder */}
+        <BubblesSection visible={surgeComplete} />
       </section>
 
       {/* Section 3: Social */}
@@ -422,9 +391,58 @@ export default function Home() {
           justifyContent: 'center',
           position: 'relative',
           zIndex: 2,
+          overflow: 'hidden',
         }}
       >
+        {/* Looping video background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="none"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 0,
+          }}
+        >
+          <source src="/videos/eventsbg-1.mp4" type="video/mp4" />
+        </video>
+
+        {/* Top fade: blends video into the black sky above */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '25vh',
+            background: 'linear-gradient(to bottom, #000000, transparent)',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* Bottom fade: clean exit */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '15vh',
+            background: 'linear-gradient(to top, #000000, transparent)',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        />
+
         {/* Content placeholder */}
+        <div style={{ position: 'relative', zIndex: 2 }} />
       </section>
     </main>
   );

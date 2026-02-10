@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Ubuntu, Bree_Serif, Rowdies, Audiowide } from "next/font/google";
+import { Geist, Geist_Mono, Ubuntu, Bree_Serif, Rowdies, Audiowide, Jura } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,6 +36,12 @@ const audiowide = Audiowide({
   weight: ["400"],
 });
 
+const jura = Jura({
+  variable: "--font-jura",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: "HEMS Labs | Bridging Hyper-Local Culture with High-Tech Solutions",
   description:
@@ -50,7 +56,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${ubuntu.variable} ${breeSerif.variable} ${rowdies.variable} ${audiowide.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${ubuntu.variable} ${breeSerif.variable} ${rowdies.variable} ${audiowide.variable} ${jura.variable} antialiased`}
       >
         {children}
       </body>
