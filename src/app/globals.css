@@ -16,6 +16,21 @@ body {
   overflow-x: hidden;
 }
 
+*,
+*::before,
+*::after {
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  caret-color: transparent;
+}
+
+button,
+a,
+[role="button"] {
+  cursor: pointer;
+}
+
 /* ========================================
    GLOBAL ANIMATIONS
    ======================================== */
@@ -52,5 +67,27 @@ body {
   100% {
     transform: translateY(-150vh) scale(1.1);
     opacity: 1;
+  }
+}
+
+/* ========================================
+   BUBBLE CURTAIN (solid backdrop for transition)
+   ======================================== */
+
+@keyframes bubble-curtain {
+  0% {
+    transform: translateY(0);
+  }
+
+  35% {
+    transform: translateY(-100vh);
+  }
+
+  55% {
+    transform: translateY(-100vh);
+  }
+
+  100% {
+    transform: translateY(-200vh);
   }
 }

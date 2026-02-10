@@ -89,7 +89,7 @@ const BubbleLayer = memo(function BubbleLayer({ scrollProgress, isNavigating, ta
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             timeoutRef.current = setTimeout(() => {
                 setAnimating(false);
-            }, 1600);
+            }, 2500);
         }
 
         // Reset trigger if scrolled way back up
@@ -121,6 +121,20 @@ const BubbleLayer = memo(function BubbleLayer({ scrollProgress, isNavigating, ta
                 zIndex: 200, // Above everything!
             }}
         >
+            {/* Solid curtain — guarantees full coverage behind bubbles */}
+            <div
+                style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: '100vh',
+                    height: '120vh',
+                    background: 'linear-gradient(180deg, transparent 0%, #0f172a 15%, #131c2e 50%, #162032 100%)',
+                    animation: 'bubble-curtain 2.5s ease-in-out forwards',
+                    zIndex: 0,
+                }}
+            />
+
             {bubbles.map((bubble) => {
                 // Randomize iridescent color shift for each bubble
                 const hueShift = (bubble.id * 37) % 360;
@@ -159,6 +173,7 @@ const BubbleLayer = memo(function BubbleLayer({ scrollProgress, isNavigating, ta
                             animation: `bubble-surge ${bubble.duration}s linear forwards`,
                             animationDelay: `${bubble.delay}s`,
                             transform: 'translateZ(0)',
+                            zIndex: 1,
                         }}
                     />
                 );
