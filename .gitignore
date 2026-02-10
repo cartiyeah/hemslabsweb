@@ -46,3 +46,13 @@ next-env.d.ts
 *.mov
 *.avi
 *.mkv
+
+# playwright screenshots (temp)
+.screenshots/
+screenshot-*.png
+
+*storybook.log
+storybook-static
+
+# MCP config (contains API keys)
+.mcp.json
