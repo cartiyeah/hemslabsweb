@@ -41,3 +41,18 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# playwright screenshots (temp)
+.screenshots/
+screenshot-*.png
+
+*storybook.log
+storybook-static
+
+# MCP config (contains API keys)
+.mcp.json

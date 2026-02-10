@@ -1,70 +1,34 @@
 @import "tailwindcss";
 
-:root {
-  --bg-primary: #4a9ede;
-  --text-primary: #ffffff;
-  --accent-blue: #1a73e8;
+@theme {
+  --font-sans: var(--font-jura), sans-serif;
+}
 
-  /* Liquid Glass Variables */
-  --glass-blur: 24px;
-  --glass-saturation: 1.8;
-  --glass-border-opacity: 0.5;
-  --glass-bg-opacity: 0.2;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: linear-gradient(180deg, #2e8bc0 0%, #45a5c4 50%, #7ec8e3 100%);
   min-height: 100vh;
-  color: var(--text-primary);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #ffffff;
+  font-family: var(--font-jura), sans-serif;
   overflow-x: hidden;
 }
 
-/* ========================================
-   CLOUD LAYER ANIMATIONS
-   ======================================== */
-
-.cloud-layer {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 1;
+*,
+*::before,
+*::after {
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+  caret-color: transparent;
 }
 
-.cloud {
-  position: absolute;
-  background: url('/cloud.svg?v=2') no-repeat center center;
-  background-size: contain;
-  will-change: transform;
-}
-
-.cloud-left {
-  animation: drift-left linear infinite;
-}
-
-.cloud-right {
-  animation: drift-right linear infinite;
-}
-
-@keyframes drift-left {
-  0% {
-    transform: translateX(100vw);
-  }
-
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-@keyframes drift-right {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(100vw);
-  }
+button,
+a,
+[role="button"] {
+  cursor: pointer;
 }
 
 /* ========================================
@@ -86,251 +50,44 @@ body {
 }
 
 /* ========================================
-   WIND ANIMATION FOR ACTIVE TAB
+   BUBBLE SURGE ANIMATION
    ======================================== */
 
-/* Active nav item base */
-.active-nav-item {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 0 20px rgba(255, 255, 255, 0.3),
-    inset 0 0 10px rgba(255, 255, 255, 0.1);
-}
-
-/* Wind glow ring */
-.wind-glow {
-  position: absolute;
-  inset: -4px;
-  border-radius: 30px;
-  background: transparent;
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  animation: wind-glow-pulse 2s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes wind-glow-pulse {
-
-  0%,
-  100% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.8;
-    transform: scale(1.05);
-  }
-}
-
-/* Wind particles */
-.wind-particle {
-  position: absolute;
-  width: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
-  border-radius: 2px;
-  pointer-events: none;
-  filter: blur(0.5px);
-}
-
-/* Particle 1 - Top, moving right */
-.wind-1 {
-  top: -8px;
-  left: 20%;
-  animation: wind-flow-right 1.5s ease-in-out infinite;
-}
-
-/* Particle 2 - Top right, moving right */
-.wind-2 {
-  top: -4px;
-  left: 50%;
-  animation: wind-flow-right 1.8s ease-in-out 0.3s infinite;
-  width: 15px;
-}
-
-/* Particle 3 - Bottom, moving left */
-.wind-3 {
-  bottom: -8px;
-  right: 20%;
-  animation: wind-flow-left 1.6s ease-in-out 0.2s infinite;
-}
-
-/* Particle 4 - Bottom left, moving left */
-.wind-4 {
-  bottom: -4px;
-  right: 50%;
-  animation: wind-flow-left 2s ease-in-out 0.5s infinite;
-  width: 12px;
-}
-
-/* Particle 5 - Small accent top */
-.wind-5 {
-  top: -6px;
-  left: 70%;
-  width: 8px;
-  height: 1px;
-  animation: wind-flow-right 1.2s ease-in-out 0.7s infinite;
-}
-
-/* Particle 6 - Small accent bottom */
-.wind-6 {
-  bottom: -6px;
-  right: 70%;
-  width: 10px;
-  height: 1px;
-  animation: wind-flow-left 1.4s ease-in-out 0.4s infinite;
-}
-
-/* Wind flowing right animation */
-@keyframes wind-flow-right {
+@keyframes bubble-surge {
   0% {
-    transform: translateX(-30px) scaleX(0.5);
+    transform: translateY(0) scale(0.4);
     opacity: 0;
   }
 
-  20% {
+  15% {
     opacity: 1;
-    transform: translateX(0) scaleX(1);
-  }
-
-  80% {
-    opacity: 1;
-    transform: translateX(40px) scaleX(1);
+    transform: translateY(-20vh) scale(1);
   }
 
   100% {
-    transform: translateX(60px) scaleX(0.3);
-    opacity: 0;
-  }
-}
-
-/* Wind flowing left animation */
-@keyframes wind-flow-left {
-  0% {
-    transform: translateX(30px) scaleX(0.5);
-    opacity: 0;
-  }
-
-  20% {
+    transform: translateY(-150vh) scale(1.1);
     opacity: 1;
-    transform: translateX(0) scaleX(1);
-  }
-
-  80% {
-    opacity: 1;
-    transform: translateX(-40px) scaleX(1);
-  }
-
-  100% {
-    transform: translateX(-60px) scaleX(0.3);
-    opacity: 0;
   }
 }
 
 /* ========================================
-   LIQUID GLASS NAVBAR
+   BUBBLE CURTAIN (solid backdrop for transition)
    ======================================== */
 
-.liquid-glass-navbar {
-  animation: navbar-entrance 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-}
-
-@keyframes navbar-entrance {
+@keyframes bubble-curtain {
   0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
+    transform: translateY(0);
+  }
+
+  35% {
+    transform: translateY(-100vh);
+  }
+
+  55% {
+    transform: translateY(-100vh);
   }
 
   100% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-.liquid-glass-navbar:hover {
-  box-shadow:
-    0 15px 50px rgba(0, 0, 0, 0.2),
-    0 5px 15px rgba(0, 0, 0, 0.1),
-    inset 0 1px 2px rgba(255, 255, 255, 0.9),
-    inset 0 -1px 2px rgba(255, 255, 255, 0.4),
-    inset 0 0 30px rgba(255, 255, 255, 0.15),
-    0 0 40px rgba(255, 255, 255, 0.1);
-}
-
-.nav-item {
-  position: relative;
-  overflow: hidden;
-}
-
-.nav-item::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
-  opacity: 0;
-  transform: scale(0);
-  transition: transform 0.5s ease, opacity 0.5s ease;
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-.nav-item:active::after {
-  opacity: 1;
-  transform: scale(2);
-  transition: transform 0s, opacity 0s;
-}
-
-/* ========================================
-   LIQUID GLASS BAR (Right side)
-   ======================================== */
-
-.liquid-glass-bar {
-  animation: bar-entrance 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.2s forwards;
-  opacity: 0;
-}
-
-@keyframes bar-entrance {
-  0% {
-    opacity: 0;
-    transform: translateX(20px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.liquid-glass-bar:hover {
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.2),
-    inset 0 1px 2px rgba(255, 255, 255, 0.9),
-    inset 0 -1px 2px rgba(255, 255, 255, 0.4),
-    0 0 30px rgba(255, 255, 255, 0.15);
-}
-
-/* ========================================
-   SUBTLE AMBIENT ANIMATION
-   ======================================== */
-
-@keyframes glass-breathe {
-
-  0%,
-  100% {
-    filter: url(#liquid-glass-full) brightness(1);
-  }
-
-  50% {
-    filter: url(#liquid-glass-full) brightness(1.02);
-  }
-}
-
-@keyframes glass-shimmer {
-  0% {
-    background-position: -200% center;
-  }
-
-  100% {
-    background-position: 200% center;
+    transform: translateY(-200vh);
   }
 }
