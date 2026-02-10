@@ -9,6 +9,7 @@ import BubbleLayer from "@/components/ui/BubbleLayer";
 import ChatWindow from "@/components/ui/ChatWindow";
 import GlassmorphicNavbar from "@/components/ui/GlassmorphicNavbar";
 import BubblesSection from "@/components/ui/BubblesSection";
+import HeroSection from "@/components/ui/HeroSection";
 
 const sections = [
   { id: "who-n-what", label: "Who 'n What" },
@@ -75,15 +76,26 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Toggle body scroll lock
+  // Reduce scroll sensitivity by 90% during bubble surge (instead of full lock)
   useEffect(() => {
-    if (isScrollLocked) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.scrollbarGutter = 'stable';
-    } else {
-      document.body.style.overflow = '';
-      document.body.style.scrollbarGutter = '';
-    }
+    if (!isScrollLocked) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      window.scrollBy(0, e.deltaY * 0.1);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      window.removeEventListener('touchmove', handleTouchMove);
+    };
   }, [isScrollLocked]);
   // High-performance tracking
   const stateRef = useRef({
@@ -131,7 +143,7 @@ export default function Home() {
             }
           }
           // After bubble surge, treat anything past trigger point as Bubbles section
-          if (stateRef.current.surgeComplete && progress >= 0.08 && foundIndex === 0) {
+          if (stateRef.current.surgeComplete && progress >= 0.06 && foundIndex === 0) {
             foundIndex = 1;
           }
           setActiveIndex((prev) => (prev !== foundIndex ? foundIndex : prev));
@@ -162,13 +174,13 @@ export default function Home() {
   const skyTheme = useMemo(() => {
     let top, middle, bottom;
 
-    if (scrollProgress < 0.08) {
+    if (scrollProgress < 0.06) {
       top = skyColors.day.top;
       middle = skyColors.day.middle;
       bottom = skyColors.day.bottom;
-    } else if (scrollProgress < 0.18) {
-      // Transition from blue sky to dark navy DURING bubble surge (0.08 to 0.18)
-      const t = (scrollProgress - 0.08) / 0.10;
+    } else if (scrollProgress < 0.16) {
+      // Transition from blue sky to dark navy DURING bubble surge (0.06 to 0.16)
+      const t = (scrollProgress - 0.06) / 0.10;
       top = lerpColor(skyColors.day.top, skyColors.bubblesDeep.top, t);
       middle = lerpColor(skyColors.day.middle, skyColors.bubblesDeep.middle, t);
       bottom = lerpColor(skyColors.day.bottom, skyColors.bubblesDeep.bottom, t);
@@ -331,17 +343,12 @@ export default function Home() {
         id="who-n-what"
         ref={(el) => { sectionRefs.current[0] = el; }}
         style={{
-          minHeight: '160vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          paddingBottom: '15vh',
+          minHeight: '200vh',
           position: 'relative',
           zIndex: 2,
         }}
       >
-        {/* Content placeholder */}
+        <HeroSection onNavigate={scrollToSection} />
       </section>
 
       {/* Section 2: Bubbles */}

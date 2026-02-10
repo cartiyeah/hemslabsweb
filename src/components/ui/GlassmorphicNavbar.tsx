@@ -88,9 +88,9 @@ const GlassmorphicNavbar: React.FC<GlassmorphicNavbarProps> = ({
                       className="absolute inset-0 rounded-full"
                       animate={{
                         boxShadow: [
-                          "0 0 20px 2px rgba(52, 211, 153, 0.3)",
-                          "0 0 30px 4px rgba(244, 114, 182, 0.4)",
-                          "0 0 20px 2px rgba(52, 211, 153, 0.3)",
+                          "0 0 30px 6px rgba(52, 211, 153, 0.5), 0 0 60px 12px rgba(52, 211, 153, 0.2)",
+                          "0 0 40px 8px rgba(244, 114, 182, 0.6), 0 0 80px 16px rgba(244, 114, 182, 0.25)",
+                          "0 0 30px 6px rgba(52, 211, 153, 0.5), 0 0 60px 12px rgba(52, 211, 153, 0.2)",
                         ],
                       }}
                       transition={{

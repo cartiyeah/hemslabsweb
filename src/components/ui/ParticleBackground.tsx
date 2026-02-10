@@ -23,8 +23,8 @@ interface ParticleBackgroundProps {
 }
 
 export default function ParticleBackground({
-  particleCount = 150,
-  interactionRadius = 200,
+  particleCount = 250,
+  interactionRadius = 300,
   className = "",
 }: ParticleBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -55,20 +55,29 @@ export default function ParticleBackground({
 
     const initParticles = (width: number, height: number) => {
       particlesRef.current = []
-      for (let i = 0; i < particleCount; i++) {
-        const x = Math.random() * width
-        const y = Math.random() * height
-        particlesRef.current.push({
-          x,
-          y,
-          baseX: x,
-          baseY: y,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          size: Math.random() * 3 + 1,
-          opacity: Math.random() * 0.5 + 0.3,
-          color: accentColors[Math.floor(Math.random() * accentColors.length)],
-        })
+      // Grid-based placement for uniform coverage with random jitter
+      const cols = Math.ceil(Math.sqrt(particleCount * (width / height)))
+      const rows = Math.ceil(particleCount / cols)
+      const cellW = width / cols
+      const cellH = height / rows
+      let count = 0
+      for (let row = 0; row < rows && count < particleCount; row++) {
+        for (let col = 0; col < cols && count < particleCount; col++) {
+          const x = col * cellW + Math.random() * cellW
+          const y = row * cellH + Math.random() * cellH
+          particlesRef.current.push({
+            x,
+            y,
+            baseX: x,
+            baseY: y,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 4 + 2.5,
+            opacity: Math.random() * 0.3 + 0.55,
+            color: accentColors[Math.floor(Math.random() * accentColors.length)],
+          })
+          count++
+        }
       }
     }
 
@@ -134,7 +143,7 @@ export default function ParticleBackground({
             ctx.lineTo(p2.x, p2.y)
             ctx.strokeStyle = p1.color
             ctx.globalAlpha = (1 - distance / 100) * 0.2
-            ctx.lineWidth = 1
+            ctx.lineWidth = 2
             ctx.stroke()
             ctx.globalAlpha = 1
           }

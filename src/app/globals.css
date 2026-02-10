@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-jura), sans-serif;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -8,7 +12,7 @@ body {
   background: linear-gradient(180deg, #2e8bc0 0%, #45a5c4 50%, #7ec8e3 100%);
   min-height: 100vh;
   color: #ffffff;
-  font-family: var(--font-bree-serif), serif;
+  font-family: var(--font-jura), sans-serif;
   overflow-x: hidden;
 }
 

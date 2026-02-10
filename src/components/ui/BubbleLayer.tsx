@@ -31,7 +31,7 @@ const BubbleLayer = memo(function BubbleLayer({ scrollProgress, isNavigating, ta
     // Generate bubbles once
     useEffect(() => {
         const generated: Bubble[] = [];
-        const bubbleCount = 145;
+        const bubbleCount = 100;
 
         for (let i = 0; i < bubbleCount; i++) {
             // Distribute more uniformly across the screen
@@ -50,8 +50,8 @@ const BubbleLayer = memo(function BubbleLayer({ scrollProgress, isNavigating, ta
         setBubbles(generated);
     }, []);
 
-    // Trigger threshold: 8% scroll (fires before section boundary, masked by surge)
-    const triggerPoint = 0.08;
+    // Trigger threshold: 6% scroll (masks transition from hero to Bubbles)
+    const triggerPoint = 0.16;
     const lastProgressRef = useRef(scrollProgress);
     const isJumpingRef = useRef(false);
 
